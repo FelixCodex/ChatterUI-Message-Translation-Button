@@ -14,7 +14,7 @@ type ChatTextProps = {
 const ChatText: React.FC<ChatTextProps> = ({ nowGenerating, index }) => {
     const { markdown, rules, style } = MarkdownStyle.useCustomFormatting()
     const [showHidden, setShowHidden] = useState(false)
-    const { swipeText } = Chats.useSwipeData(index)
+    const { swipeText, swipeTranslation, swipeShowingTranslation } = Chats.useSwipeData(index)
     const viewRef = useRef<View>(null)
     const animHeight = useAnimatedValue(-1)
     const targetHeight = useRef(-1)
@@ -49,7 +49,11 @@ const ChatText: React.FC<ChatTextProps> = ({ nowGenerating, index }) => {
         <Animated.View style={{ overflow: 'scroll', height: animHeight }}>
             <View style={{ minHeight: 10 }} ref={viewRef} onLayout={() => updateHeight()}>
                 <Markdown mergeStyle={false} markdownit={markdown} rules={rules} style={style}>
-                    {renderedText}
+                    {swipeTranslation
+                        ? swipeShowingTranslation
+                            ? swipeTranslation
+                            : renderedText
+                        : renderedText}
                 </Markdown>
                 {filteredText.found && (
                     <View style={{ flexDirection: 'row' }}>

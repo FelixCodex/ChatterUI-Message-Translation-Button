@@ -26,6 +26,8 @@ import { Characters } from './Characters'
 import { Logger } from './Logger'
 import { AppSettings } from '../constants/GlobalValues'
 import { mmkv } from '../storage/MMKV'
+import { AvailableLanguages, TranslationSettings } from '@lib/constants/TranslationValues'
+import { translate } from './TranslatorService'
 
 export interface ChatSwipeState extends ChatSwipe {
     token_count?: number
@@ -83,7 +85,8 @@ export interface ChatState {
             verifySwipeId?: number
             timings?: CompletionTimings
             resetTimings?: boolean
-        }
+        },
+        extras?: { translation?: string; showingTranslation?: boolean }
     ) => Promise<void>
     deleteEntry: (index: number) => Promise<void>
     renameChat: (chatId: number, name: string) => void
@@ -196,6 +199,8 @@ export namespace Chats {
             await get().updateFromBuffer(cachedSwipeId)
             useInference.getState().stopGenerating()
             get().setBuffer({ data: '' })
+            if (mmkv.getBoolean(TranslationSettings.TranslateAfterInference))
+                await updateLastMessageTranslation(get().data)
         },
         load: async (chatId, overrideScrollOffset) => {
             const data = (await db.query.chat(chatId)) as ChatData | undefined
@@ -306,8 +311,9 @@ export namespace Chats {
             })
         },
 
-        updateEntry: async (index: number, message: string, options = {}) => {
+        updateEntry: async (index: number, message: string, options = {}, extras = {}) => {
             const { verifySwipeId, updateFinished, updateStarted, timings, resetTimings } = options
+            const { translation, showingTranslation } = extras
             const messages = get()?.data?.messages
             if (!messages) return
 
@@ -330,6 +336,9 @@ export namespace Chats {
                 id: chatSwipeId,
                 swipe: message,
             }
+            if (translation !== undefined) updatedSwipe.translation = translation
+            if (showingTranslation !== undefined)
+                updatedSwipe.showing_translation = showingTranslation
             if (updateFinished) updatedSwipe.gen_finished = date
             if (updateStarted) updatedSwipe.gen_started = date
             if (timings) updatedSwipe.timings = timings
@@ -342,6 +351,8 @@ export namespace Chats {
             const entry = messages[index].swipes[messages[index].swipe_id]
             entry.swipe = message
             entry.token_count = undefined
+            if (translation !== undefined) entry.translation = translation
+            if (showingTranslation !== undefined) entry.showing_translation = showingTranslation
             if (updateFinished) entry.gen_finished = date
             if (updateStarted) entry.gen_started = date
             if (timings) entry.timings = timings
@@ -875,6 +886,31 @@ export namespace Chats {
         }
     }
 
+    const updateLastMessageTranslation = async (data: ChatData | undefined) => {
+        if (!data?.messages?.length) return
+        const lastMessageIndex = data.messages.length - 1
+        const lastMessage = data.messages[lastMessageIndex]
+        if (!lastMessage?.swipes?.length) return
+        const lastSwipe = lastMessage.swipes[lastMessage.swipe_id]
+        if (!lastSwipe?.swipe) return
+
+        const language = mmkv.getString(
+            TranslationSettings.TranslateToLanguageMessage
+        ) as AvailableLanguages
+        const translation = await translate(lastSwipe.swipe, language)
+        if (translation.success) {
+            await useChatState.getState().updateEntry(
+                lastMessageIndex,
+                lastSwipe.swipe,
+                {},
+                {
+                    translation: translation.text,
+                    showingTranslation: true,
+                }
+            )
+        }
+    }
+
     export const useEntryData = (index: number) => {
         // TODO: Investigate if dummyEntry is dangerous
         const entry = useChatState((state) => state?.data?.messages?.[index])
@@ -895,14 +931,27 @@ export namespace Chats {
         const message = useEntryData(index)
         const swipeIndex = message.swipe_id
         const swipesLength = message.swipes.length
-        const { swipe, swipeText, swipeId } = useChatState(
-            useShallow((state) => ({
-                swipe: state?.data?.messages?.[index]?.swipes[swipeIndex],
-                swipeText: state?.data?.messages?.[index]?.swipes[swipeIndex].swipe,
-                swipeId: state?.data?.messages?.[index]?.swipes[swipeIndex].id,
-            }))
-        )
-        return { swipeId, swipe, swipeText, swipeIndex, swipesLength }
+        const { swipe, swipeText, swipeId, swipeTranslation, swipeShowingTranslation } =
+            useChatState(
+                useShallow((state) => ({
+                    swipe: state?.data?.messages?.[index]?.swipes[swipeIndex],
+                    swipeText: state?.data?.messages?.[index]?.swipes[swipeIndex].swipe,
+                    swipeId: state?.data?.messages?.[index]?.swipes[swipeIndex].id,
+                    swipeTranslation:
+                        state?.data?.messages?.[index]?.swipes[swipeIndex].translation,
+                    swipeShowingTranslation:
+                        state?.data?.messages?.[index]?.swipes[swipeIndex].showing_translation,
+                }))
+            )
+        return {
+            swipeId,
+            swipe,
+            swipeText,
+            swipeIndex,
+            swipesLength,
+            swipeTranslation,
+            swipeShowingTranslation,
+        }
     }
 
     export const useChat = () => {

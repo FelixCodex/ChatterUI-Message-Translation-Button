@@ -15,7 +15,8 @@ type ChatTextProps = {
 const ChatTextLast: React.FC<ChatTextProps> = ({ nowGenerating, index }) => {
     const { markdown, rules, style } = MarkdownStyle.useCustomFormatting()
 
-    const { swipeText, swipeId } = Chats.useSwipeData(index)
+    const { swipeText, swipeId, swipeTranslation, swipeShowingTranslation } =
+        Chats.useSwipeData(index)
     const { buffer } = Chats.useBuffer()
 
     const [showHidden, setShowHidden] = useState(false)
@@ -55,8 +56,13 @@ const ChatTextLast: React.FC<ChatTextProps> = ({ nowGenerating, index }) => {
         if (!nowGenerating && !firstRender.current) setTimeout(() => updateHeight(), 400)
     }, [nowGenerating])
 
-    const filteredText = useTextFilter(swipeText?.trim() ?? '')
-    const renderedText = showHidden ? swipeText?.trim() : filteredText.result
+    const swipeTextTranslated = swipeTranslation
+        ? swipeShowingTranslation
+            ? swipeTranslation
+            : swipeText
+        : swipeText
+    const filteredText = useTextFilter(swipeTextTranslated?.trim() ?? '')
+    const renderedText = showHidden ? swipeTextTranslated?.trim() : filteredText.result
     return (
         <Animated.View style={{ overflow: 'scroll', height: animHeight }}>
             <View style={{ minHeight: 10 }} ref={viewRef} onLayout={updateHeight}>

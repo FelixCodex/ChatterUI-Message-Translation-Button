@@ -122,6 +122,11 @@ export const chatSwipes = sqliteTable('chat_swipes', {
         .references(() => chatEntries.id, { onDelete: 'cascade' }),
     swipe: text('swipe').notNull().default(''),
 
+    translation: text('translation').default(''),
+    showing_translation: integer('showing_translation', { mode: 'boolean' })
+        .notNull()
+        .default(false),
+
     send_date: integer('send_date', { mode: 'timestamp' })
         .notNull()
         .$defaultFn(() => new Date()),

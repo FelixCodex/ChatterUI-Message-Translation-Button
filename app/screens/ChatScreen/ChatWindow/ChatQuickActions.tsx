@@ -136,6 +136,9 @@ const ChatQuickActions: React.FC<ChatActionProps> = ({ index, nowGenerating, isL
                                 />
                             </Animated.View>
                         )}
+                        
+                        <ChatTranslationButtons index={index} nowGenerating={nowGenerating} />
+                        
                         <Animated.View
                             entering={ZoomIn.duration(200)}
                             exiting={ZoomOut.duration(200)}>

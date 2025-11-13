@@ -3,11 +3,15 @@ import PopupMenu from '@components/views/PopupMenu'
 import { Ionicons } from '@expo/vector-icons'
 import { Theme } from '@lib/theme/ThemeManager'
 import { useRouter } from 'expo-router'
+import { useState } from 'react'
 import { StyleSheet } from 'react-native'
 
-const ChatOptions = () => {
+type ChatOptionsProps = { handleTranslate?: () => Promise<boolean> }
+
+const ChatOptions = ({ handleTranslate }: ChatOptionsProps) => {
     const router = useRouter()
     const styles = useStyles()
+    const [loadingTranslation, setLoadingTranslation] = useState(false)
 
     const setShow = Drawer.useDrawerStore((state) => state.setShow)
 
@@ -25,6 +29,19 @@ const ChatOptions = () => {
                     },
                     label: 'Main Menu',
                     icon: 'back',
+                },
+                {
+                    onPress: async (m) => {
+                        setLoadingTranslation(true)
+                        try {
+                            if (handleTranslate) await handleTranslate()
+                        } finally {
+                            setLoadingTranslation(false)
+                            m.current?.close()
+                        }
+                    },
+                    label: loadingTranslation ? 'Translating...' : 'Translate Message',
+                    icon: loadingTranslation ? 'sync' : 'earth',
                 },
                 {
                     onPress: (m) => {

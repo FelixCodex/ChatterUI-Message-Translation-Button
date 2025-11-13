@@ -29,6 +29,7 @@ import { Theme } from '../theme/ThemeManager'
 import { AppDirectory } from './File'
 import { patchAndroidText } from './PatchText'
 import { lockScreenOrientation } from './Screen'
+import { TranslationSettings, TranslationSettingsDefault } from '@lib/constants/TranslationValues'
 
 export const loadChatOnInit = async () => {
     if (!mmkv.getBoolean(AppSettings.ChatOnStartup)) return
@@ -214,6 +215,14 @@ const setCPUThreads = () => {
     mmkv.set(Global.CPUThreads, newThreads)
 }
 
+const setDefaultTanslationLanguage = () => {
+    Object.keys(TranslationSettingsDefault).map((item) => {
+        const data = mmkv.getBoolean(item)
+        if (data !== undefined) return
+        mmkv.set(item, TranslationSettingsDefault[item as TranslationSettings])
+    })
+}
+
 export const startupApp = () => {
     console.log('[APP STARTED]: T1APT')
     // DEV: Needed for Reset
@@ -222,6 +231,7 @@ export const startupApp = () => {
 
     // Sets default preferences
     setAppDefaultSettings()
+    setDefaultTanslationLanguage()
     generateDefaultDirectories()
     setDefaultUser()
     setDefaultInstruct()

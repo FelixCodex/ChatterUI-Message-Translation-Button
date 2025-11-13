@@ -25,6 +25,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
 import ChatOptions from './ChatInputOptions'
+import { AvailableLanguages, TranslationSettings } from '@lib/constants/TranslationValues'
+import { translate } from '@lib/state/TranslatorService'
+import { mmkv } from '@lib/storage/MMKV'
 
 export type Attachment = {
     uri: string
@@ -90,6 +93,18 @@ const ChatInput = () => {
         setNewMessage('')
         setAttachments([])
         if (swipeId) generateResponse(swipeId)
+    }
+
+    const handleTranslate = async () => {
+        const language = mmkv.getString(
+            TranslationSettings.TranslateToLanguageInput
+        ) as AvailableLanguages
+        const translation = await translate(newMessage, language)
+        if (translation.success) {
+            setNewMessage(translation.text)
+            return true
+        }
+        return false
     }
 
     return (
@@ -180,7 +195,7 @@ const ChatInput = () => {
                             entering={FadeIn}
                             exiting={FadeOut}
                             style={{ flexDirection: 'row', columnGap: 8, alignItems: 'center' }}>
-                            <ChatOptions />
+                            <ChatOptions handleTranslate={handleTranslate} />
                             <PopupMenu
                                 icon="paperclip"
                                 iconSize={20}
