@@ -1,3 +1,24 @@
+# ChatterUI - Message Translation Button Feature
+
+In this fork I added a Translation Button to the Messages Quick Actions and to the Input options
+
+<div>
+Message Translation Button
+<br/>
+<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translationbutton.jpg" width="150" > 
+<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translatedmessage.jpg" width="150" > 
+<br/>
+Input Translation Button
+<br/>
+<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translateinputoption.jpg" width="150" > 
+<br/>
+Translation Settings
+<br/>
+<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translationsettings.jpg" width="150" > 
+</div>
+
+## v Original Readme v
+
 # ChatterUI - A simple app for LLMs
 
 ChatterUI is a native mobile frontend for LLMs.
@@ -135,4 +156,3 @@ Currently in development
 
 -   [llama.cpp](https://github.com/ggerganov/llama.cpp) - the underlying engine to run LLMs
 -   [llama.rn](https://github.com/mybigday/llama.rn) - the original react-native llama.cpp adapter
-
