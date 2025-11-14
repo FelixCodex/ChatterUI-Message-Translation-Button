@@ -5,16 +5,16 @@ In this fork I added a Translation Button to the Messages Quick Actions and to t
 <div>
 Message Translation Button
 <br/>
-<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translationbutton.webp" width="150" > 
-<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translatedmessage.webp" width="150" > 
+<img src ="https://github.com/Vali-98/ChatterUI-Message-Translation-Button/blob/master/assets/screenshots/translationbutton.webp" width="150" > 
+<img src ="https://github.com/Vali-98/ChatterUI-Message-Translation-Button/blob/master/assets/screenshots/translatedmessage.webp" width="150" > 
 <br/>
 Input Translation Button
 <br/>
-<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translateinputoption.webp" width="150" > 
+<img src ="https://github.com/Vali-98/ChatterUI-Message-Translation-Button/blob/master/assets/screenshots/translateinputoption.webp" width="150" > 
 <br/>
 Translation Settings
 <br/>
-<img src ="https://github.com/Vali-98/ChatterUI/blob/master/assets/screenshots/translationsettings.webp" width="150" > 
+<img src ="https://github.com/Vali-98/ChatterUI-Message-Translation-Button/blob/master/assets/screenshots/translationsettings.webp" width="150" > 
 </div>
 
 ## v Original Readme v
