@@ -19,7 +19,7 @@ const TranslationSettingsFrame = () => {
     const [afterInference, setAfterInference] = useMMKVBoolean(TransStt.TranslateAfterInference)
 
     const [toLanguageMsg, setToLanguageMsg] = useMMKVString(TransStt.TranslateToLanguageMessage)
-    const [toLanguageInput, setToLanguageInput] = useMMKVString(TransStt.TranslateToLanguageMessage)
+    const [toLanguageInput, setToLanguageInput] = useMMKVString(TransStt.TranslateToLanguageInput)
 
     const [selectedMsg, setSelectedMsg] = useState<(typeof selectorData)[0]>(
         selectorData.find((e) => e.value === toLanguageMsg) ?? selectorData[0]
