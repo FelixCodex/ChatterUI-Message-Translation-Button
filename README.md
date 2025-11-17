@@ -17,7 +17,9 @@ Translation Settings
 <img src ="https://github.com/FelixCodex/ChatterUI-Message-Translation-Button/blob/master/assets/screenshots/translationsettings.webp" width="150" > 
 </div>
 
-## v Original Readme v
+[Original Repo](https://github.com/Vali-98/ChatterUI/)
+
+## Original Readme Below
 
 # ChatterUI - A simple app for LLMs
 
